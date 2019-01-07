@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Script to check important hibernate values on OSX
+
+sudo pmset -g custom | grep "hibernatemode \|standby \|autopoweroff "
+

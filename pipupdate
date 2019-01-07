@@ -1,0 +1,53 @@
+#!/bin/sh 
+# 
+# Script to update my outdated  pip modules in 1 go
+
+
+usage () {
+	echo "Usage: pipupdate <python version> e.g., 2 or 3"
+}
+
+check () {
+	if [ "${1}" -ne "0" ] # if the entered python version is incorrect, it will return exit code 127
+	then 
+		echo "Error: Use a valid python version"
+		exit ${1} 
+	fi	
+}
+
+update () {
+	for item in `$pip list --no-cache-dir -o | cut -d ' ' -f 1 | sed 1,2d`
+	do
+		`$pip install --upgrade $item > /dev/null 2>&1`  	# > /dev/null redirects stdout to devnull
+									# 2>&1 redirects stderr to stdout, which
+									# discards it as well, since stdout is
+									# already pointing to dev/null
+		echo "updating $item"
+	done
+	echo "If pip's legacy format is used, update the 2 remaining items manually. LOL"
+}
+
+
+
+argLength=$#
+
+if [ $argLength == 1 ]
+then
+	version="$1"
+	pip="python$version -m pip"
+	$pip -V > /dev/null 2>&1
+	check $?	# check if the entered pip version is valid
+
+	sudo echo "Updating Python$version's pip modules"
+	echo ""
+	update
+else
+	usage
+fi
+
+
+
+
+
+
+

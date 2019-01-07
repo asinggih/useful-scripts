@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# A script to enable Sierra style darkmode in Mojave
+
+
+usage () {
+	echo ""
+	echo "Usage: \n   darkmode [options]"
+}
+
+options () {
+	echo ""
+	echo "General Options:"
+	echo "   -h, --help \t\t\t Show help" 
+	echo "   -r, --reset \t\t\t Reset to default dark mode"
+}
+
+enable_darkmode () {
+	echo ""
+	echo "Enabling Sierra style darkmode"
+	defaults write -g NSRequiresAquaSystemAppearance -bool Yes
+	defaults write com.apple.Spotlight NSRequiresAquaSystemAppearance -bool No
+	defaults write com.apple.notificationcenterui NSRequiresAquaSystemAppearance -bool No
+	echo ""	
+	echo "Please log out and log in again to apply changes"
+}
+
+reset () {
+	echo ""
+	echo "resetting to default darkmode"
+	defaults write -g NSRequiresAquaSystemAppearance -bool No
+	echo ""
+	echo "Please log out and log in again to apply changes"
+}
+
+argLength=$#
+
+if [ $argLength == 0 ]
+then
+	enable_darkmode
+	exit
+fi
+
+options=$1
+
+if [ $options == "-r"  ] || [ $options == "--reset"  ]
+then
+	reset
+	exit
+fi
+usage
+options
+
+exit
+
+
+
+
