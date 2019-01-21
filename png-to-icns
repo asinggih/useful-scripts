@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+#
+# Thanks to retifrav for the writeup of the conversion
+# https://retifrav.github.io/blog/2018/10/09/macos-convert-png-to-icns/#qt
+
+import os
+import sys
+import subprocess
+
+
+class Icon:
+    # scale == 2 means "full size"
+    def __init__(self, width, scale=2):
+        self.width = width
+        self.scale = scale
+
+    def generateName(self, ext):
+        if self.scale != 2:
+            return "icon_{}x{}{}".format(self.width, self.width, ext)
+        return "icon_{}x{}@2x{}".format(self.width, self.width, ext)
+
+
+def script_help():
+    print()
+    print("Usage:")
+    print("   png-to-icns [file]")
+    print()
+    print("Options:")
+    print("   -h, --help \t\t\t Show help")
+
+
+def error(flag):
+
+    if flag == 1:
+        # arg is too long
+        print("Argument is too long")
+        script_help()
+        pass
+
+    elif flag == 2:
+        # file does not exist
+        print("The given file does not exist")
+
+
+if __name__ == "__main__":
+
+    help = ["-h", "--help"]
+
+    if len(sys.argv) == 1 or sys.argv[1] in help:
+        script_help()
+        sys.exit()
+
+    elif len(sys.argv) > 2:
+        error(1)
+        script_help()
+        sys.exit()
+
+    file_exists = os.path.isfile(sys.argv[1])
+    if not file_exists:
+        error(2)
+        sys.exit()
+
+    full_path_filename = sys.argv[1]
+    filename = os.path.basename(full_path_filename)
+    name, extension = os.path.splitext(filename)
+
+    dirname = name + ".iconset"
+    iconset_exist = os.path.isdir(dirname)
+    if not iconset_exist:
+        os.mkdir(dirname)
+        print("Creating {}".format(dirname))
+    else:
+        print("{} exists".format(dirname))
+
+    full_icon_list = [
+        Icon(32),
+        Icon(32, 1),
+        Icon(64),
+        Icon(64, 1),
+        Icon(128),
+        Icon(128, 1),
+        Icon(256),
+        Icon(256, 1),
+        Icon(512),
+        Icon(512, 1)
+    ]
+
+    # sips -z 16 16 some.png --out icon_16x16.png
+    for icon in full_icon_list:
+        subprocess.run([
+            "sips",
+            "-z",
+            str(icon.width),
+            str(icon.width),
+            full_path_filename,
+            "--out",
+            os.path.join(dirname, icon.generateName(extension))
+        ])
+
+    subprocess.run([
+        "iconutil",
+        "-c",
+        "icns",
+        dirname
+    ])
