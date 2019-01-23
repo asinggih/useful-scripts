@@ -9,7 +9,7 @@ import subprocess
 
 
 class Icon:
-    # scale == 2 means "full size"
+
     def __init__(self, width, scale=2):
         self.width = width
         self.scale = scale
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     filename = os.path.basename(full_path_filename)
     name, extension = os.path.splitext(filename)
 
-    dirname = name + ".iconset"
+    dirname = name + ".iconset"                 # creating an .iconset directory
     iconset_exist = os.path.isdir(dirname)
     if not iconset_exist:
         os.mkdir(dirname)
@@ -73,8 +73,8 @@ if __name__ == "__main__":
         print("{} exists".format(dirname))
 
     full_icon_list = [
-        Icon(32),
-        Icon(32, 1),
+        Icon(32),       # @2x
+        Icon(32, 1),    # normal
         Icon(64),
         Icon(64, 1),
         Icon(128),
@@ -97,6 +97,7 @@ if __name__ == "__main__":
             os.path.join(dirname, icon.generateName(extension))
         ])
 
+    # iconutil -c icns filename.iconset
     subprocess.run([
         "iconutil",
         "-c",
