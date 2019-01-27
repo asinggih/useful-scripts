@@ -31,7 +31,7 @@ update () {
 
 argLength=$#
 
-if [ $argLength == 1 ]
+if [ $argLength = 1 ]	# "=" operator inside if-bracket statemnt is a comparator not assignment
 then
 	version="$1"
 	pip="python$version -m pip"
